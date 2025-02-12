@@ -20,7 +20,7 @@ public class DepartementController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Departement> getDepartementById(@PathVariable Long id)
+    public ResponseEntity<Departement> getDepartementById(@PathVariable Long id) {
         return departementService.getDepartementById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
