@@ -1,0 +1,123 @@
+version: '3.8'
+services:
+  # Discovery Service
+  eureka-server:
+    build: ./discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - university-network
+
+  # Config Server
+  config-server:
+    build: ./config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-server
+    networks:
+      - university-network
+
+  # API Gateway
+  gateway:
+    build: ./Gateway
+    ports:
+      - "8099:8099"
+    depends_on:
+      - eureka-server
+      - config-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - university-network
+
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    networks:
+      - university-network
+
+  # MongoDB
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - university-network
+
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=university
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - university-network
+
+  # Microservices
+  etudiant-service:
+    build: ./etudiant
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - config-server
+    networks:
+      - university-network
+
+  cours-service:
+    build: ./microservices-universite-cours-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - config-server
+    networks:
+      - university-network
+
+  billing-service:
+    build: ./billingms
+    ports:
+      - "8070:8070"
+    depends_on:
+      - mongodb
+      - eureka-server
+    networks:
+      - university-network
+
+networks:
+  university-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mysql_data:
+
+prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - university-network
+
+grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - university-network

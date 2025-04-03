@@ -31,3 +31,27 @@ const PORT = process.env.PORT || 8070;
 app.listen(PORT, () => {
   console.log(`Billing service running on port ${PORT}`);
 });
+
+/*const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Billing Microservice API',
+      version: '1.0.0',
+      description: 'API documentation for the University Billing Service',
+    },
+    servers: [
+      {
+        url: 'http://localhost:8070',
+        description: 'Development server',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));*/

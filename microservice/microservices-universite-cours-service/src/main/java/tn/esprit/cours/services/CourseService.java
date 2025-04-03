@@ -15,19 +15,32 @@ public class CourseService {
     public Course addCourse(Course course) {
         return courseRepository.save(course);
     }
-    public Course updateCourse(Long id, Course newCourse) { if (courseRepository.findById(id).isPresent()) {
-        Course existingCourse = courseRepository.findById(id).get(); existingCourse.setCourseCode(newCourse.getCourseCode()); existingCourse.setCourseName(newCourse.getCourseName()); existingCourse.setCredits(newCourse.getCredits()); existingCourse.setDescription(newCourse.getDescription());
-        return courseRepository.save(existingCourse);
-    } else
+
+    public Course updateCourse(Long id, Course newCourse) {
+        if (courseRepository.findById(id).isPresent()) {
+            Course existingCourse = courseRepository.findById(id).get();
+            existingCourse.setCourseCode(newCourse.getCourseCode());
+            existingCourse.setCourseName(newCourse.getCourseName());
+            existingCourse.setCredits(newCourse.getCredits());
+            existingCourse.setDescription(newCourse.getDescription());
+            return courseRepository.save(existingCourse);
+        }
         return null;
     }
+
     public String deleteCourse(Long id) {
-        if (courseRepository.findById(id).isPresent()) { courseRepository.deleteById(id);
+        if (courseRepository.findById(id).isPresent()) {
+            courseRepository.deleteById(id);
             return "cours supprimé";
-        } else
-            return "cours non supprimé";
+        }
+        return "cours non supprimé";
     }
+
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
+    }
+
+    public Course getCourseById(Long id) {
+        return courseRepository.findById(id).orElse(null);
     }
 }

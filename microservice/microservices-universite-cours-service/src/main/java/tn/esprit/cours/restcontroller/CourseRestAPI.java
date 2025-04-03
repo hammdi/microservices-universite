@@ -23,6 +23,20 @@ public class CourseRestAPI {
     @Autowired
     private CourseService courseService;
 
+    @GetMapping
+    public ResponseEntity<List<Course>> getAllCourses() {
+        return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
+        Course course = courseService.getCourseById(id);
+        if (course != null) {
+            return ResponseEntity.ok(course);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping(value = "/ajouter", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
@@ -41,10 +55,5 @@ public class CourseRestAPI {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> deleteCourse(@PathVariable(value = "id") Long id) {
         return new ResponseEntity<>(courseService.deleteCourse(id), HttpStatus.OK);
-    }
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Course>> getAllCourses() {
-        return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
     }
 }
