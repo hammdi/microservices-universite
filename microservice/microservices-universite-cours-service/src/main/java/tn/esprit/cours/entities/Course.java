@@ -1,10 +1,6 @@
 package tn.esprit.cours.entities;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,14 +20,17 @@ public class Course implements Serializable {
     private String courseName;
     private String description;
     private int credits;
+    
+    private Long teacherId; // ID de l'enseignant responsable du cours
 
     public Course() {super();}
 
-    public Course(String courseCode, String courseName, String description, int credits) {
+    public Course(String courseCode, String courseName, String description, int credits, Long teacherId) {
         super();
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.description = description;
         this.credits = credits;
+        this.teacherId = teacherId;
     }
 }
