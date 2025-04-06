@@ -11,8 +11,8 @@
     <groupId>tn.esprit</groupId>
     <artifactId>Cours</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Cours</name>
-    <description>Cours</description>
+    <name>Microservice Université Cours</name>
+    <description>Microservice Université Cours</description>
 
     <properties>
         <java.version>17</java.version>
@@ -82,11 +82,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>8.0.1.Final</version>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>
