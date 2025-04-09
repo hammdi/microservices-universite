@@ -1,0 +1,29 @@
+# Database files
+*.db
+*.mv.db
+*.trace.db
+Database/
+data/
+
+# Node modules
+node_modules/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Compiled files
+target/
+build/
+dist/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Keycloak
+keycloak-26.1.3/
+keycloak/
