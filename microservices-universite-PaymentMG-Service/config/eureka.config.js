@@ -2,30 +2,34 @@ const Eureka = require('eureka-js-client').Eureka;
 
 const eurekaClient = new Eureka({
   instance: {
-    app: 'BILLING-SERVICE',
-    hostName: 'host.docker.internal',
-    ipAddr: '127.0.0.1',
+    app: 'PAYMENT-SERVICE',
+    hostName: 'payment-service',
+    instanceId: 'payment-service:8070',
+    ipAddr: 'payment-service',
     port: {
-      '$': process.env.PORT,
+      '$': 8070,
       '@enabled': true
     },
-    vipAddress: 'billing-service',
-    statusPageUrl: `http://host.docker.internal:${process.env.PORT}/health`,
-    healthCheckUrl: `http://host.docker.internal:${process.env.PORT}/health`,
-    homePageUrl: `http://host.docker.internal:${process.env.PORT}`,
+    vipAddress: 'PAYMENT-SERVICE',
+    statusPageUrl: 'http://payment-service:8070/health',
+    healthCheckUrl: 'http://payment-service:8070/health',
+    homePageUrl: 'http://payment-service:8070',
     dataCenterInfo: {
       '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
       name: 'MyOwn'
     }
   },
   eureka: {
-    host: process.env.EUREKA_HOST,
-    port: process.env.EUREKA_PORT,
+    host: 'eureka-server',
+    port: 8761,
     servicePath: '/eureka/apps/',
-    preferIpAddress: true,
+    preferIpAddress: false,
     shouldUseDns: false,
     registerWithEureka: true,
-    fetchRegistry: true
+    fetchRegistry: true,
+    serviceUrls: {
+      default: ['http://eureka-server:8761/eureka/apps/']
+    }
   }
 });
 

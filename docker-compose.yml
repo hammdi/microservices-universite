@@ -1,46 +1,37 @@
-version: '3.8'
 services:
   # Discovery Service
   eureka-server:
-    build: ./discovery-service
+    build: ./DiscoveryService
     ports:
       - "8761:8761"
-    networks:
-      - university-network
-
-  # Config Server
-  config-server:
-    build: ./config-server
-    ports:
-      - "8888:8888"
-    depends_on:
-      - eureka-server
-    networks:
-      - university-network
-
-  # API Gateway
-  gateway:
-    build: ./Gateway
-    ports:
-      - "8099:8099"
-    depends_on:
-      - eureka-server
-      - config-server
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # Keycloak
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
+  # Config Server
+  config-server:
+    build: ./ConfigServer
     ports:
-      - "8080:8080"
+      - "8888:8888"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
     networks:
       - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # MongoDB
   mongodb:
@@ -49,10 +40,17 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=university_billing
     networks:
       - university-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # MySQL
+  # MySQL Service
   mysql:
     image: mysql:8.0
     ports:
@@ -60,64 +58,216 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=university
-    volumes:
-      - mysql_data:/var/lib/mysql
     networks:
       - university-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # Microservices
-  etudiant-service:
-    build: ./etudiant
-    ports:
-      - "8081:8081"
-    depends_on:
-      - eureka-server
-      - config-server
-    networks:
-      - university-network
-
-  cours-service:
-    build: ./microservices-universite-cours-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - eureka-server
-      - config-server
-    networks:
-      - university-network
-
-  billing-service:
-    build: ./billingms
+  # Payment Service
+  payment-service:
+    build: ./microservices-universite-PaymentMG-Service
     ports:
       - "8070:8070"
     depends_on:
-      - mongodb
-      - eureka-server
+      mongodb:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - PORT=8070
+      - MONGODB_URI=mongodb://mongodb:27017/university_billing
+      - EUREKA_HOST=eureka-server
+      - EUREKA_PORT=8761
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - NODE_ENV=production
     networks:
       - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8070/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Etudiant Service
+  etudiant-service:
+    build: ./microservices-universite-Etudiant-Service
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Enseignant Service
+  enseignant-service:
+    build: ./microservices-universite-enseignant-Service
+    ports:
+      - "8093:8093"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8093/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Departement Service
+  departement-service:
+    build: ./microservices-universite-Departement-Service
+    ports:
+      - "8086:8086"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Examen Service
+  examen-service:
+    build: ./microservices-universite-examen-service
+    ports:
+      - "8069:8069"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:examdb
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cours Service
+  cours-service:
+    build: ./microservices-universite-cours-service
+    ports:
+      - "8094:8094"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:coursdb
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME=keycloak
+      - KC_DB=dev-file
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+      - KC_FEATURES=preview
+      - KC_IMPORT=/opt/keycloak/data/import/realm-export.json
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - university-network
+
+
+
+
+
+
+
+
+  # API Gateway
+  gateway:
+    build: ./Gateway
+    ports:
+      - "8099:8099"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8099/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongodb_data:
+    driver: local
 
 networks:
   university-network:
     driver: bridge
 
-volumes:
-  mongodb_data:
-  mysql_data:
 
-prometheus:
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - university-network
-
-grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-    depends_on:
-      - prometheus
-    networks:
-      - university-network
