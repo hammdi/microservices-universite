@@ -1,0 +1,12 @@
+<h2><span class="material-icons">person</span> Teachers</h2>
+<table>
+  <tr>
+    <th>ID</th><th>Name</th><th>Email</th><th>Subject</th>
+  </tr>
+  <tr *ngFor="let teacher of teachers">
+    <td>{{teacher.id}}</td>
+    <td>{{teacher.name}}</td>
+    <td>{{teacher.email}}</td>
+    <td>{{teacher.subject}}</td>
+  </tr>
+</table>

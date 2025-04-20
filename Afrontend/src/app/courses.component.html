@@ -1,0 +1,11 @@
+<h2><span class="material-icons">menu_book</span> Courses</h2>
+<table>
+  <tr>
+    <th>Code</th><th>Title</th><th>Credits</th>
+  </tr>
+  <tr *ngFor="let course of courses">
+    <td>{{course.code}}</td>
+    <td>{{course.title}}</td>
+    <td>{{course.credits}}</td>
+  </tr>
+</table>

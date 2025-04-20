@@ -1,0 +1,241 @@
+/* Dashboard Styles */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f6f7ff;
+}
+.sidebar {
+  width: 220px;
+  background: #fff;
+  box-shadow: 2px 0 16px 0 rgba(31, 38, 135, 0.07);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0 1rem 0;
+}
+.sidebar-header {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #6658ea;
+  padding: 0 1.5rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar nav ul li {
+  padding: 0.9rem 1.8rem;
+  color: #333;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.2s, border-color 0.2s;
+  font-size: 1.09rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.sidebar nav ul li.active,
+.sidebar nav ul li:hover {
+  background: #f6f7ff;
+  border-left: 3px solid #6658ea;
+  color: #6658ea;
+}
+.logout-btn {
+  margin: 2rem 1.5rem 0 1.5rem;
+  padding: 0.7rem 0;
+  background: #f8f8fc;
+  border: none;
+  color: #e74c3c;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background 0.2s;
+}
+.logout-btn:hover {
+  background: #f1e6e6;
+}
+.main-content {
+  flex: 1;
+  padding: 2.2rem 2.5rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.search-bar {
+  width: 280px;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.5rem;
+  border: 1.5px solid #e3e3e3;
+  font-size: 1rem;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.search-bar:focus {
+  border-color: #6658ea;
+  outline: none;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.user-avatar {
+  background: #6658ea;
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.welcome-banner {
+  background: linear-gradient(90deg, #6658ea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 1.1rem;
+  padding: 2rem 2.5rem 1.7rem 2.5rem;
+  margin-bottom: 2.4rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.13);
+}
+.welcome-banner h2 {
+  font-size: 2rem;
+  margin: 0 0 0.6rem 0;
+  font-weight: 700;
+}
+.welcome-banner p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 0.9rem;
+  box-shadow: 0 2px 12px rgba(102, 88, 234, 0.09);
+  padding: 1.4rem 1.2rem 1.2rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-width: 0;
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.7rem;
+  background: #f6f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+.stat-icon.students { background: #e3e7fe; color: #6658ea; }
+.stat-icon.teachers { background: #fbeee6; color: #f39c12; }
+.stat-icon.courses { background: #f7e3fa; color: #a569bd; }
+.stat-icon.payments { background: #e8f8f5; color: #16a085; }
+.stat-icon.departments { background: #fdf6e3; color: #b7950b; }
+.stat-icon.exams { background: #fbeee6; color: #e67e22; }
+.stat-info h3 {
+  font-size: 1.5rem;
+  margin: 0 0 0.2rem 0;
+  font-weight: 800;
+}
+.stat-info span {
+  font-size: 1rem;
+  color: #888;
+}
+.quick-actions {
+  margin-top: 1.5rem;
+}
+.quick-actions h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.actions-list {
+  display: flex;
+  gap: 1.5rem;
+}
+.action-card {
+  background: #fff;
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.06);
+  padding: 1.1rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 600;
+  color: #6658ea;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.action-card:hover {
+  background: #f6f7ff;
+  box-shadow: 0 4px 16px rgba(102, 88, 234, 0.13);
+}
+.notification.success {
+  position: fixed;
+  right: 2.5rem;
+  bottom: 2.5rem;
+  background: #fff;
+  color: #6658ea;
+  border-left: 4px solid #6658ea;
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 12px rgba(102, 88, 234, 0.11);
+  padding: 1.1rem 1.6rem;
+  min-width: 260px;
+  z-index: 10;
+  animation: fadeInUp 0.6s;
+}
+.notification.success strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Placeholder icons - replace with real icon font or SVGs */
+[class^="icon-"] {
+  width: 1.3em;
+  height: 1.3em;
+  display: inline-block;
+  background: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  margin-right: 0.5em;
+}
+.icon-university { mask-image: url('data:image/svg+xml;utf8,<svg fill="%236658ea" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L1 7l1 2h20l1-2-11-5zm0 2.18L18.09 7H5.91L12 4.18zM3 9v10h2V9H3zm4 0v10h2V9H7zm4 0v10h2V9h-2zm4 0v10h2V9h-2zm4 0v10h2V9h-2z"/></svg>'); }
+.icon-dashboard { mask-image: url('data:image/svg+xml;utf8,<svg fill="%236658ea" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>'); }
+.icon-students { mask-image: url('data:image/svg+xml;utf8,<svg fill="%236658ea" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4"/><path d="M12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z"/></svg>'); }
+.icon-teachers { mask-image: url('data:image/svg+xml;utf8,<svg fill="%23f39c12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4"/><path d="M12 13c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z"/></svg>'); }
+.icon-courses { mask-image: url('data:image/svg+xml;utf8,<svg fill="%23a569bd" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>'); }
+.icon-payments { mask-image: url('data:image/svg+xml;utf8,<svg fill="%2316a085" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M9 10h.01"/></svg>'); }
+.icon-departments { mask-image: url('data:image/svg+xml;utf8,<svg fill="%23b7950b" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>'); }
+.icon-exams { mask-image: url('data:image/svg+xml;utf8,<svg fill="%23e67e22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>'); }
+.icon-settings { mask-image: url('data:image/svg+xml;utf8,<svg fill="%236658ea" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>'); }
+.icon-bell { mask-image: url('data:image/svg+xml;utf8,<svg fill="%236658ea" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-1.29 1.29a1 1 0 0 0 .29 1.71h14a1 1 0 0 0 .29-1.71L18 16z"/></svg>'); }
+.icon-logout { mask-image: url('data:image/svg+xml;utf8,<svg fill="%23e74c3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 13v-2H7V8l-5 4 5 4v-3z"/><path d="M20 3h-8c-1.1 0-2 .9-2 2v4h2V5h8v14h-8v-4h-2v4c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>'); }
+
