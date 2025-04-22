@@ -32,6 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { getKeycloakToken } from "@/services/authService";
 
 interface Course {
   id: string;
@@ -59,7 +60,40 @@ const CoursesPage = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
+
+  const API_URL = "/cours"; // URL du Gateway
+
   useEffect(() => {
+
+
+    const fetchCourses = async () => {
+      try {
+        const token = await getKeycloakToken();
+        const response = await fetch(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data);
+        } else {
+          throw new Error("Failed to fetch courses");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cours :", error);
+      }
+    };
+
+    fetchCourses();
+
+
+
+
+
+
+
+
     // Check if user is logged in
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
@@ -103,57 +137,93 @@ const CoursesPage = () => {
     }
   }, [navigate]);
 
-  const handleAddCourse = () => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const courseToAdd = { id, ...newCourse };
-    const updatedCourses = [...courses, courseToAdd];
-    
-    setCourses(updatedCourses);
-    sessionStorage.setItem("courses", JSON.stringify(updatedCourses));
-    
-    setNewCourse({ courseCode: "", courseName: "", description: "", credits: 3, teacherId: "" });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Course Added",
-      description: `${courseToAdd.courseName} has been added successfully`,
-    });
+  const handleAddCourse = async () => {
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`${API_URL}/ajouter`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newCourse),
+      });
+      if (response.ok) {
+        const addedCourse = await response.json();
+        setCourses([...courses, addedCourse]);
+        setNewCourse({
+          courseCode: "",
+          courseName: "",
+          description: "",
+          credits: 3,
+          teacherId: "",
+        });
+        setIsAddDialogOpen(false);
+        toast({
+          title: "Course Added",
+          description: `${addedCourse.courseName} has been added successfully`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du cours :", error);
+    }
   };
 
-  const handleEditCourse = () => {
+  const handleEditCourse = async () => {
     if (!editCourse) return;
-    
-    const updatedCourses = courses.map((course) =>
-      course.id === editCourse.id ? editCourse : course
-    );
-    
-    setCourses(updatedCourses);
-    sessionStorage.setItem("courses", JSON.stringify(updatedCourses));
-    
-    setEditCourse(null);
-    setIsEditDialogOpen(false);
-    
-    toast({
-      title: "Course Updated",
-      description: `${editCourse.courseName} has been updated successfully`,
-    });
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`${API_URL}/${editCourse.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editCourse),
+      });
+      if (response.ok) {
+        const updatedCourse = await response.json();
+        setCourses(
+          courses.map((course) =>
+            course.id === updatedCourse.id ? updatedCourse : course
+          )
+        );
+        setEditCourse(null);
+        setIsEditDialogOpen(false);
+        toast({
+          title: "Course Updated",
+          description: `${updatedCourse.courseName} has been updated successfully`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du cours :", error);
+    }
   };
 
-  const handleDeleteCourse = () => {
+  const handleDeleteCourse = async () => {
     if (!courseToDelete) return;
-    
-    const updatedCourses = courses.filter((course) => course.id !== courseToDelete.id);
-    
-    setCourses(updatedCourses);
-    sessionStorage.setItem("courses", JSON.stringify(updatedCourses));
-    
-    setCourseToDelete(null);
-    setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: "Course Deleted",
-      description: `${courseToDelete.courseName} has been removed from the system`,
-    });
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`${API_URL}/${courseToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        setCourses(
+          courses.filter((course) => course.id !== courseToDelete.id)
+        );
+        setCourseToDelete(null);
+        setIsDeleteDialogOpen(false);
+        toast({
+          title: "Course Deleted",
+          description: `${courseToDelete.courseName} has been removed from the system`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du cours :", error);
+    }
   };
 
   return (

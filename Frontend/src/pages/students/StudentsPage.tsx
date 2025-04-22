@@ -31,6 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { getKeycloakToken } from "@/services/authService";
 
 interface Student {
   id: string;
@@ -62,7 +63,61 @@ const StudentsPage = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
 
+
+  //const API_URL = "http://localhost:8080/students"; // Remplacez par l'URL de votre backend
+
   useEffect(() => {
+
+
+
+/*
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch("/students");
+        const data = await response.json();
+        setStudents(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des étudiants :", error);
+      }
+    };
+  
+    fetchStudents();
+*/
+
+
+
+
+    const handleFetchStudents = async () => {
+      try {
+        const token = await getKeycloakToken(); // Récupérez le token depuis Keycloak
+    
+        const response = await fetch("/students", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`, // Ajoutez le token ici
+          },
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          setStudents(data);
+        } else {
+          throw new Error("Failed to fetch students");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des étudiants :", error);
+      }
+    };
+
+    handleFetchStudents(); // ✅ APPEL ICI
+
+
+
+
+
+
+
+
     // Check if user is logged in
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
@@ -112,65 +167,111 @@ const StudentsPage = () => {
     }
   }, [navigate]);
 
-  const handleAddStudent = () => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const studentToAdd = { id, ...newStudent };
-    const updatedStudents = [...students, studentToAdd];
-    
-    setStudents(updatedStudents);
-    sessionStorage.setItem("students", JSON.stringify(updatedStudents));
-    
-    setNewStudent({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      coursFavoris: [],
-      level: 'L1',
-    });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Student Added",
-      description: `${studentToAdd.firstName} ${studentToAdd.lastName} has been added successfully`,
-    });
+  const handleAddStudent = async () => {
+    try {
+      const token = await getKeycloakToken(); // Récupérez le token depuis Keycloak
+  
+      const response = await fetch("/students", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // Ajoutez le token ici
+        },
+        body: JSON.stringify(newStudent),
+      });
+  
+      if (response.ok) {
+        const addedStudent = await response.json();
+        setStudents([...students, addedStudent]);
+        setNewStudent({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          address: "",
+          coursFavoris: [],
+          level: "L1",
+        });
+        setIsAddDialogOpen(false);
+  
+        toast({
+          title: "Student Added",
+          description: `${addedStudent.firstName} ${addedStudent.lastName} has been added successfully`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'étudiant :", error);
+    }
   };
 
-  const handleEditStudent = () => {
+  const handleEditStudent = async () => {
     if (!editStudent) return;
-    
-    const updatedStudents = students.map((student) =>
-      student.id === editStudent.id ? editStudent : student
-    );
-    
-    setStudents(updatedStudents);
-    sessionStorage.setItem("students", JSON.stringify(updatedStudents));
-    
-    setEditStudent(null);
-    setIsEditDialogOpen(false);
-    
-    toast({
-      title: "Student Updated",
-      description: `${editStudent.firstName} ${editStudent.lastName}'s information has been updated successfully`,
-    });
+  
+    try {
+      const token = await getKeycloakToken(); // Récupérez le token depuis Keycloak
+  
+      const response = await fetch(`/students/${editStudent.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // Ajoutez le token ici
+        },
+        body: JSON.stringify(editStudent),
+      });
+  
+      if (response.ok) {
+        const updatedStudent = await response.json();
+        const updatedStudents = students.map((student) =>
+          student.id === updatedStudent.id ? updatedStudent : student
+        );
+        setStudents(updatedStudents);
+        setEditStudent(null);
+        setIsEditDialogOpen(false);
+  
+        toast({
+          title: "Student Updated",
+          description: `${updatedStudent.firstName} ${updatedStudent.lastName}'s information has been updated successfully`,
+        });
+      } else {
+        throw new Error("Failed to update student");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'étudiant :", error);
+    }
   };
+  
 
-  const handleDeleteStudent = () => {
+  const handleDeleteStudent = async () => {
     if (!studentToDelete) return;
-    
-    const updatedStudents = students.filter((student) => student.id !== studentToDelete.id);
-    
-    setStudents(updatedStudents);
-    sessionStorage.setItem("students", JSON.stringify(updatedStudents));
-    
-    setStudentToDelete(null);
-    setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: "Student Deleted",
-      description: `${studentToDelete.firstName} ${studentToDelete.lastName} has been removed from the system`,
-    });
+  
+    try {
+      const token = await getKeycloakToken(); // Récupérez le token depuis Keycloak
+  
+      const response = await fetch(`/students/${studentToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`, // Ajoutez le token ici
+        },
+      });
+  
+      if (response.ok) {
+        const updatedStudents = students.filter(
+          (student) => student.id !== studentToDelete.id
+        );
+        setStudents(updatedStudents);
+        setStudentToDelete(null);
+        setIsDeleteDialogOpen(false);
+  
+        toast({
+          title: "Student Deleted",
+          description: `${studentToDelete.firstName} ${studentToDelete.lastName} has been removed from the system`,
+        });
+      } else {
+        throw new Error("Failed to delete student");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'étudiant :", error);
+    }
   };
 
   return (

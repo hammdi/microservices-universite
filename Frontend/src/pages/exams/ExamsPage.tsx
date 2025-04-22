@@ -19,9 +19,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getKeycloakToken } from "@/services/authService";
+
 import { 
   Select,
   SelectContent,
@@ -35,7 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 // Updated interface to match the Examen.java entity
 interface Exam {
   id: number;
-  type: 'MATH' | 'PHY' | 'FRENCH' | 'ENGLISH' | 'SCI';
+  type: string;
   date: string;
   grade: number;
 }
@@ -55,6 +58,42 @@ const ExamsPage = () => {
 
   // Check authentication
   useEffect(() => {
+
+
+
+
+    const fetchExams = async () => {
+      try {
+        const token = await getKeycloakToken();
+        const response = await fetch("/examens", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setExams(data);
+        } else {
+          throw new Error("Failed to fetch exams");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des examens :", error);
+      }
+    };
+
+    fetchExams();
+
+
+
+
+
+
+
+
+
+
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
       navigate("/login");
@@ -85,43 +124,79 @@ const ExamsPage = () => {
     }
   }, [exams]);
 
-  const handleAddExam = () => {
-    const id = exams.length > 0 ? Math.max(...exams.map(exam => exam.id)) + 1 : 1;
-    const examToAdd = {
-      id,
-      ...newExam
-    };
-    
-    setExams([...exams, examToAdd]);
-    setNewExam({ type: 'MATH', date: '', grade: 0 });
-    setIsAddDialogOpen(false);
-    toast.success("Exam added successfully!");
+  const handleAddExam = async () => {
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch("/examens", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newExam),
+      });
+
+      if (response.ok) {
+        const addedExam = await response.json();
+        setExams([...exams, addedExam]);
+        setNewExam({ type: "", date: "", grade: 0 });
+        setIsAddDialogOpen(false);
+
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'examen :", error);
+    }
   };
 
-  const handleUpdateExam = () => {
+  const handleEditExam = async () => {
     if (!selectedExam) return;
-    
-    const updatedExams = exams.map(exam => 
-      exam.id === selectedExam.id ? selectedExam : exam
-    );
-    
-    setExams(updatedExams);
-    setIsEditDialogOpen(false);
-    toast.success("Exam updated successfully!");
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`/examens/${selectedExam.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(selectedExam),
+      });
+
+      if (response.ok) {
+        const updatedExam = await response.json();
+        setExams(
+          exams.map((exam) => (exam.id === updatedExam.id ? updatedExam : exam))
+        );
+        setSelectedExam(null);
+        setIsEditDialogOpen(false);
+
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'examen :", error);
+    }
   };
 
-  const handleDeleteExam = () => {
+  const handleDeleteExam = async () => {
     if (!selectedExam) return;
-    
-    const filteredExams = exams.filter(
-      exam => exam.id !== selectedExam.id
-    );
-    
-    setExams(filteredExams);
-    setIsDeleteDialogOpen(false);
-    toast.success("Exam deleted successfully!");
-  };
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`/examens/${selectedExam.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (response.ok) {
+        setExams(exams.filter((exam) => exam.id !== selectedExam.id));
+        setSelectedExam(null);
+        setIsDeleteDialogOpen(false);
+
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'examen :", error);
+    }
+  };
+  
   const openEditDialog = (exam: Exam) => {
     setSelectedExam(exam);
     setIsEditDialogOpen(true);
@@ -317,7 +392,7 @@ const ExamsPage = () => {
                 )}
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={handleUpdateExam}>Save Changes</Button>
+                  <Button onClick={handleEditExam}>Save Changes</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

@@ -31,6 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { getKeycloakToken } from "@/services/authService";
 
 interface Teacher {
   id: string;
@@ -59,6 +60,49 @@ const TeachersPage = () => {
   const [teacherToDelete, setTeacherToDelete] = useState<Teacher | null>(null);
 
   useEffect(() => {
+
+
+
+
+
+
+    const handleFetchTeacher = async () => {
+      try {
+        const token = await getKeycloakToken(); // Récupérez le token depuis Keycloak
+    
+        const response = await fetch("/api/teachers", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`, // Ajoutez le token ici
+          },
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          setTeachers(data);
+        } else {
+          throw new Error("Failed to fetch students");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des étudiants :", error);
+      }
+    };
+
+    handleFetchTeacher(); // ✅ APPEL ICI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Check if user is logged in
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
@@ -102,57 +146,101 @@ const TeachersPage = () => {
     }
   }, [navigate]);
 
-  const handleAddTeacher = () => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const teacherToAdd = { id, ...newTeacher };
-    const updatedTeachers = [...teachers, teacherToAdd];
-    
-    setTeachers(updatedTeachers);
-    sessionStorage.setItem("teachers", JSON.stringify(updatedTeachers));
-    
-    setNewTeacher({ firstName: "", lastName: "", email: "", phone: "", specialty: "" });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Teacher Added",
-      description: `${teacherToAdd.firstName} ${teacherToAdd.lastName} has been added successfully`,
-    });
+  const handleAddTeacher = async () => {
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch("api/teachers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newTeacher),
+      });
+      if (response.ok) {
+        const addedTeacher = await response.json();
+        setTeachers([...teachers, addedTeacher]);
+        setNewTeacher({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          specialty: "",
+        });
+        setIsAddDialogOpen(false);
+        toast({
+          title: "Teacher Added",
+          description: `${addedTeacher.firstName} ${addedTeacher.lastName} has been added successfully`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'enseignant :", error);
+    }
   };
 
-  const handleEditTeacher = () => {
+
+
+
+
+
+
+
+
+  const handleEditTeacher = async () => {
     if (!editTeacher) return;
-    
-    const updatedTeachers = teachers.map((teacher) =>
-      teacher.id === editTeacher.id ? editTeacher : teacher
-    );
-    
-    setTeachers(updatedTeachers);
-    sessionStorage.setItem("teachers", JSON.stringify(updatedTeachers));
-    
-    setEditTeacher(null);
-    setIsEditDialogOpen(false);
-    
-    toast({
-      title: "Teacher Updated",
-      description: `${editTeacher.firstName} ${editTeacher.lastName}'s information has been updated successfully`,
-    });
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`${"/api/teachers"}/${editTeacher.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editTeacher),
+      });
+      if (response.ok) {
+        const updatedTeacher = await response.json();
+        setTeachers(
+          teachers.map((teacher) =>
+            teacher.id === updatedTeacher.id ? updatedTeacher : teacher
+          )
+        );
+        setEditTeacher(null);
+        setIsEditDialogOpen(false);
+        toast({
+          title: "Teacher Updated",
+          description: `${updatedTeacher.firstName} ${updatedTeacher.lastName}'s information has been updated successfully`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'enseignant :", error);
+    }
   };
 
-  const handleDeleteTeacher = () => {
+  const handleDeleteTeacher = async () => {
     if (!teacherToDelete) return;
-    
-    const updatedTeachers = teachers.filter((teacher) => teacher.id !== teacherToDelete.id);
-    
-    setTeachers(updatedTeachers);
-    sessionStorage.setItem("teachers", JSON.stringify(updatedTeachers));
-    
-    setTeacherToDelete(null);
-    setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: "Teacher Deleted",
-      description: `${teacherToDelete.firstName} ${teacherToDelete.lastName} has been removed from the system`,
-    });
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`${"/api/teachers"}/${teacherToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        setTeachers(
+          teachers.filter((teacher) => teacher.id !== teacherToDelete.id)
+        );
+        setTeacherToDelete(null);
+        setIsDeleteDialogOpen(false);
+        toast({
+          title: "Teacher Deleted",
+          description: `${teacherToDelete.firstName} ${teacherToDelete.lastName} has been removed from the system`,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'enseignant :", error);
+    }
   };
 
   return (

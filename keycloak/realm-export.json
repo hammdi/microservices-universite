@@ -518,7 +518,7 @@
       "redirectUris": [
         "/realms/JobBoardKeycloack/account/*"
       ],
-      "webOrigins": [],
+      "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -563,16 +563,17 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/JobBoardKeycloack/account/*"
+        "/realms/JobBoardKeycloack/account/*",
+         "http://localhost:8082/*"
       ],
-      "webOrigins": [],
+      "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
+      "serviceAccountsEnabled": true,
       "publicClient": true,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
@@ -619,7 +620,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [],
-      "webOrigins": [],
+      "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -662,7 +663,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [],
-      "webOrigins": [],
+      "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": true,
       "consentRequired": false,
@@ -711,7 +712,7 @@
         "http://localhost:8080/*"
       ],
       "webOrigins": [
-        "http://localhost:8080"
+        "+"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -766,7 +767,7 @@
         "http://localhost:8099/*"
       ],
       "webOrigins": [
-        "http://localhost:8099"
+        "+"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -816,8 +817,8 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": [],
-      "webOrigins": [],
+      "redirectUris": ["+"],
+      "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": true,
       "consentRequired": false,

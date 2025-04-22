@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { getKeycloakToken } from "@/services/authService";
 
 interface Department {
   id: string;
@@ -44,6 +45,68 @@ const DepartmentsPage = () => {
 
   // Check authentication
   useEffect(() => {
+
+
+    const fetchDepartments = async () => {
+      try {
+        const token = await getKeycloakToken();
+        const response = await fetch("/departement", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setDepartments(data);
+        } else {
+          throw new Error("Failed to fetch departments");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des départements :", error);
+      }
+    };
+
+    fetchDepartments();
+
+
+
+
+
+
+
+
+
+
+  const handleDeleteDepartment = async () => {
+    if (!selectedDepartment) return;
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`/departement/${selectedDepartment.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setDepartments(
+          departments.filter((department) => department.id !== selectedDepartment.id)
+        );
+        setSelectedDepartment(null);
+        setIsDeleteDialogOpen(false);
+        toast.success("Department deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du département :", error);
+    }
+  };
+
+
+
+
+
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
       navigate("/login");
@@ -74,42 +137,101 @@ const DepartmentsPage = () => {
     }
   }, [departments]);
 
-  const handleAddDepartment = () => {
-    const id = Date.now().toString();
-    const departmentToAdd = {
-      id,
-      ...newDepartment
-    };
-    
-    setDepartments([...departments, departmentToAdd]);
-    setNewDepartment({ nom: "", description: "" });
-    setIsAddDialogOpen(false);
-    toast.success("Department added successfully!");
+  const handleAddDepartment = async () => {
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch("/departement", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newDepartment),
+      });
+
+      if (response.ok) {
+        const addedDepartment = await response.json();
+        setDepartments([...departments, addedDepartment]);
+        setNewDepartment({ nom: "", description: "" });
+        setIsAddDialogOpen(false);
+        toast.success("Department added successfully!");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du département :", error);
+    }
   };
 
-  const handleUpdateDepartment = () => {
+
+
+
+
+
+
+
+
+
+
+
+  const handleEditDepartment = async () => {
     if (!selectedDepartment) return;
-    
-    const updatedDepartments = departments.map(department => 
-      department.id === selectedDepartment.id ? selectedDepartment : department
-    );
-    
-    setDepartments(updatedDepartments);
-    setIsEditDialogOpen(false);
-    toast.success("Department updated successfully!");
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`/departement/${selectedDepartment.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(selectedDepartment),
+      });
+
+      if (response.ok) {
+        const updatedDepartment = await response.json();
+        setDepartments(
+          departments.map((department) =>
+            department.id === updatedDepartment.id ? updatedDepartment : department
+          )
+        );
+        setSelectedDepartment(null);
+        setIsEditDialogOpen(false);
+        toast.success("Department updated successfully!");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du département :", error);
+    }
   };
 
-  const handleDeleteDepartment = () => {
+
+
+
+
+
+
+  
+  const handleDeleteDepartment = async () => {
     if (!selectedDepartment) return;
-    
-    const filteredDepartments = departments.filter(
-      department => department.id !== selectedDepartment.id
-    );
-    
-    setDepartments(filteredDepartments);
-    setIsDeleteDialogOpen(false);
-    toast.success("Department deleted successfully!");
+    try {
+      const token = await getKeycloakToken();
+      const response = await fetch(`/departement/${selectedDepartment.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setDepartments(
+          departments.filter((department) => department.id !== selectedDepartment.id)
+        );
+        setSelectedDepartment(null);
+        setIsDeleteDialogOpen(false);
+        toast.success("Department deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du département :", error);
+    }
   };
+
 
   const openEditDialog = (department: Department) => {
     setSelectedDepartment(department);
@@ -237,7 +359,7 @@ const DepartmentsPage = () => {
                 )}
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={handleUpdateDepartment}>Save Changes</Button>
+                  <Button onClick={handleEditDepartment}>Save Changes</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
