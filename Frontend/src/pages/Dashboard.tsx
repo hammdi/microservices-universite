@@ -1,10 +1,9 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import { BookOpen, Users, UserCheck, CreditCard, School, BarChart2 } from "lucide-react";
+import { BookOpen, Users, UserCheck, CreditCard, School, BarChart2, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -26,6 +25,7 @@ const Dashboard = () => {
     { title: "Payments", value: "€124,500", icon: CreditCard, color: "bg-amber-500", link: "/payments" },
     { title: "Departments", value: "12", icon: School, color: "bg-rose-500", link: "/departments" },
     { title: "Exams", value: "234", icon: BarChart2, color: "bg-indigo-500", link: "/exams" },
+    { title: "Chatbot", value: "Ask Me!", icon: MessageCircle, color: "bg-cyan-500", link: "/chatbot" },
   ];
 
   return (

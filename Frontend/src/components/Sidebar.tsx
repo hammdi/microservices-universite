@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
@@ -11,6 +10,7 @@ import {
   FileText, 
   Settings,
   LogOut,
+  MessageCircle
   Mail
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -67,6 +67,7 @@ const Sidebar = () => {
     { title: "Payments", path: "/payments", icon: CreditCard },
     { title: "Departments", path: "/departments", icon: School },
     { title: "Exams", path: "/exams", icon: FileText },
+    { title: "Chatbot", path: "/chatbot", icon: MessageCircle },
     { title: "Settings", path: "/settings", icon: Settings },
     { title: "Emails", path: "/mail", icon: Mail },
   ];
