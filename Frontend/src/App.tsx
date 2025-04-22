@@ -15,7 +15,7 @@ import TeachersPage from "./pages/teachers/TeachersPage";
 import StudentsPage from "./pages/students/StudentsPage";
 import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import ExamsPage from "./pages/exams/ExamsPage";
-
+import Chatbot from "./pages/Chatbot";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -37,7 +37,8 @@ const App = () => {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/exams" element={<ExamsPage />} />
-            
+            <Route path="/chatbot" element={<Chatbot />} />
+
             {/* Index route for redirection logic */}
             <Route path="/" element={<Index />} />
             

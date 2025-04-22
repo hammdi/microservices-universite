@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
@@ -10,7 +9,8 @@ import {
   School, 
   FileText, 
   Settings,
-  LogOut
+  LogOut,
+  MessageCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -66,6 +66,7 @@ const Sidebar = () => {
     { title: "Payments", path: "/payments", icon: CreditCard },
     { title: "Departments", path: "/departments", icon: School },
     { title: "Exams", path: "/exams", icon: FileText },
+    { title: "Chatbot", path: "/chatbot", icon: MessageCircle },
     { title: "Settings", path: "/settings", icon: Settings },
   ];
 
