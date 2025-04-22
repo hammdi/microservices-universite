@@ -16,6 +16,9 @@ import StudentsPage from "./pages/students/StudentsPage";
 import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import ExamsPage from "./pages/exams/ExamsPage";
 
+import MailPage from "./pages/mail/Mailpage";
+import Maildetailspage from "./pages/mail/Maildetailspage"; 
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -37,7 +40,11 @@ const App = () => {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/exams" element={<ExamsPage />} />
+
+            <Route path="/mail" element={<MailPage/>} />
+            <Route path="/maildetail/:id" element={<Maildetailspage/>} />
             
+
             {/* Index route for redirection logic */}
             <Route path="/" element={<Index />} />
             

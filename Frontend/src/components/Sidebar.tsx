@@ -10,7 +10,8 @@ import {
   School, 
   FileText, 
   Settings,
-  LogOut
+  LogOut,
+  Mail
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -67,6 +68,7 @@ const Sidebar = () => {
     { title: "Departments", path: "/departments", icon: School },
     { title: "Exams", path: "/exams", icon: FileText },
     { title: "Settings", path: "/settings", icon: Settings },
+    { title: "Emails", path: "/mail", icon: Mail },
   ];
 
   return (
