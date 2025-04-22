@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   MessageCircle
+  Mail
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -68,6 +69,7 @@ const Sidebar = () => {
     { title: "Exams", path: "/exams", icon: FileText },
     { title: "Chatbot", path: "/chatbot", icon: MessageCircle },
     { title: "Settings", path: "/settings", icon: Settings },
+    { title: "Emails", path: "/mail", icon: Mail },
   ];
 
   return (
