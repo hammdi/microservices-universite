@@ -6,5 +6,9 @@ router.get('/student/:studentId', paymentController.getStudentPayments); // Move
 router.get('/', paymentController.getAllPayments);
 router.get('/:id', paymentController.getPaymentById);
 router.put('/:id', paymentController.updatePayment);
+<<<<<<< HEAD
+router.delete('/:id', paymentController.deletePayment);
+=======
+>>>>>>> 59d9e5629c996274e5cf4488f0d051bdcc4ed809
 
 module.exports = router;
