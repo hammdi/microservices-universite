@@ -68,7 +68,7 @@ ${JSON.stringify(data, null, 2)}\`
     };
 
     // Ollama API call (streaming)
-    const response = await fetch("http://localhost:11434/api/chat", {
+    const response = await fetch("http://host.docker.internal:11434", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
