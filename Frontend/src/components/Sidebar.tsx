@@ -10,7 +10,7 @@ import {
   FileText, 
   Settings,
   LogOut,
-  MessageCircle
+  MessageCircle,
   Mail
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
