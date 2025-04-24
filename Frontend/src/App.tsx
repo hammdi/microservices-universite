@@ -16,6 +16,9 @@ import StudentsPage from "./pages/students/StudentsPage";
 import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import ExamsPage from "./pages/exams/ExamsPage";
 
+import Chatbot from "./pages/Chatbot";
+
+
 import MailPage from "./pages/mail/Mailpage";
 import Maildetailspage from "./pages/mail/Maildetailspage"; 
 
@@ -40,6 +43,9 @@ const App = () => {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/exams" element={<ExamsPage />} />
+
+            <Route path="/chatbot" element={<Chatbot />} />
+
 
             <Route path="/mail" element={<MailPage/>} />
             <Route path="/maildetail/:id" element={<Maildetailspage/>} />
