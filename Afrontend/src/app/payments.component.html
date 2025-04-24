@@ -1,0 +1,12 @@
+<h2><span class="material-icons">payments</span> Payments</h2>
+<table>
+  <tr>
+    <th>ID</th><th>Student</th><th>Amount</th><th>Date</th>
+  </tr>
+  <tr *ngFor="let payment of payments">
+    <td>{{payment.id}}</td>
+    <td>{{payment.student}}</td>
+    <td>{{payment.amount | currency}}</td>
+    <td>{{payment.date}}</td>
+  </tr>
+</table>

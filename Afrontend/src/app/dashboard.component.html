@@ -1,0 +1,24 @@
+<!-- Dashboard Layout -->
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo"><span class="material-icons">school</span> UniAdmin</span>
+    </div>
+    <nav>
+      <ul>
+        <li routerLink="/dashboard" routerLinkActive="active"><span class="material-icons">dashboard</span> Dashboard</li>
+        <li routerLink="/students" routerLinkActive="active"><span class="material-icons">groups</span> Students</li>
+        <li routerLink="/teachers" routerLinkActive="active"><span class="material-icons">person</span> Teachers</li>
+        <li routerLink="/courses" routerLinkActive="active"><span class="material-icons">menu_book</span> Courses</li>
+        <li routerLink="/payments" routerLinkActive="active"><span class="material-icons">payments</span> Payments</li>
+        <li routerLink="/departments" routerLinkActive="active"><span class="material-icons">apartment</span> Departments</li>
+        <li routerLink="/exams" routerLinkActive="active"><span class="material-icons">assignment</span> Exams</li>
+        <li routerLink="/settings" routerLinkActive="active"><span class="material-icons">settings</span> Settings</li>
+      </ul>
+    </nav>
+    <button class="logout-btn" (click)="logout()"><span class="material-icons">logout</span> Logout</button>
+  </aside>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

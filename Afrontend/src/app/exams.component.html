@@ -1,0 +1,12 @@
+<h2><span class="material-icons">assignment</span> Exams</h2>
+<table>
+  <tr>
+    <th>ID</th><th>Course</th><th>Date</th><th>Room</th>
+  </tr>
+  <tr *ngFor="let exam of exams">
+    <td>{{exam.id}}</td>
+    <td>{{exam.course}}</td>
+    <td>{{exam.date}}</td>
+    <td>{{exam.room}}</td>
+  </tr>
+</table>
